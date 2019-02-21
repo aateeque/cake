@@ -5,8 +5,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using Cake.Core.Configuration;
 using Cake.Core.Diagnostics;
 using Cake.Core.Polyfill;
+using Cake.Core.Tooling;
 
 namespace Cake.Core.IO
 {
@@ -15,26 +17,31 @@ namespace Cake.Core.IO
     /// </summary>
     public sealed class ProcessRunner : IProcessRunner
     {
+        private readonly IFileSystem _fileSystem;
         private readonly ICakeEnvironment _environment;
         private readonly ICakeLog _log;
+        private readonly IToolLocator _tools;
+        private readonly ICakeConfiguration _configuration;
+        private readonly bool _noMonoCoersion;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessRunner" /> class.
         /// </summary>
+        /// <param name="fileSystem">The file system.</param>
         /// <param name="environment">The environment.</param>
         /// <param name="log">The log.</param>
-        public ProcessRunner(ICakeEnvironment environment, ICakeLog log)
+        /// <param name="tools">The tool locator.</param>
+        /// <param name="configuration">The tool configuration.</param>
+        public ProcessRunner(IFileSystem fileSystem, ICakeEnvironment environment, ICakeLog log, IToolLocator tools, ICakeConfiguration configuration)
         {
-            if (environment == null)
-            {
-                throw new ArgumentNullException(nameof(environment));
-            }
-            if (log == null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
-            _environment = environment;
-            _log = log;
+            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _tools = tools ?? throw new ArgumentNullException(nameof(tools));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+
+            var noMonoCoersion = configuration.GetValue(Constants.Settings.NoMonoCoersion);
+            _noMonoCoersion = noMonoCoersion != null && noMonoCoersion.Equals("true", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -54,11 +61,65 @@ namespace Cake.Core.IO
                 throw new ArgumentNullException(nameof(settings));
             }
 
+            ProcessStartInfo info = GetProcessStartInfo(filePath, settings, out Func<string, string> filterUnsafe);
+
+            // Start and return the process.
+            var process = Process.Start(info);
+            if (process == null)
+            {
+                return null;
+            }
+
+            var processWrapper = new ProcessWrapper(process, _log, filterUnsafe, settings.RedirectedStandardOutputHandler,
+                filterUnsafe, settings.RedirectedStandardErrorHandler);
+
+            if (settings.RedirectStandardOutput)
+            {
+                SubscribeStandardOutput(process, processWrapper);
+            }
+            if (settings.RedirectStandardError)
+            {
+                SubscribeStandardError(process, processWrapper);
+            }
+
+            return processWrapper;
+        }
+
+        internal ProcessStartInfo GetProcessStartInfo(FilePath filePath, ProcessSettings settings, out Func<string, string> filterUnsafe)
+        {
             // Get the fileName
             var fileName = _environment.Platform.IsUnix() ? filePath.FullPath : filePath.FullPath.Quote();
 
             // Get the arguments.
             var arguments = settings.Arguments ?? new ProcessArgumentBuilder();
+            filterUnsafe = arguments.FilterUnsafe;
+
+#if NETCORE
+            if (!_noMonoCoersion &&
+                _environment.Platform.IsUnix() &&
+                _environment.Runtime.IsCoreClr &&
+                fileName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
+                _fileSystem.GetFile(fileName).IsClrAssembly())
+            {
+                FilePath monoPath = _tools.Resolve("mono");
+                if (monoPath != null)
+                {
+                    if (!settings.Silent)
+                    {
+                        _log.Verbose(Verbosity.Diagnostic, "{0} is a .NET Framework executable, will try execute using Mono.", fileName);
+                    }
+                    arguments.PrependQuoted(fileName);
+                    fileName = monoPath.FullPath;
+                }
+                else
+                {
+                    if (!settings.Silent)
+                    {
+                        _log.Verbose(Verbosity.Diagnostic, "{0} is a .NET Framework executable, you might need to install Mono for it to execute successfully.", fileName);
+                    }
+                }
+            }
+#endif
 
             if (!settings.Silent)
             {
@@ -66,10 +127,6 @@ namespace Cake.Core.IO
                 var message = string.Concat(fileName, " ", arguments.RenderSafe().TrimEnd());
                 _log.Verbose(Verbosity.Diagnostic, "Executing: {0}", message);
             }
-
-            // Get the working directory.
-            var workingDirectory = settings.WorkingDirectory ?? _environment.WorkingDirectory;
-            settings.WorkingDirectory = workingDirectory.MakeAbsolute(_environment);
 
             // Create the process start info.
             var info = new ProcessStartInfo(fileName)
@@ -80,9 +137,11 @@ namespace Cake.Core.IO
                 RedirectStandardOutput = settings.RedirectStandardOutput
             };
 
-            if (settings.WorkingDirectory != null)
+            // Allow working directory?
+            if (!settings.NoWorkingDirectory)
             {
-                info.WorkingDirectory = settings.WorkingDirectory.FullPath;
+                var workingDirectory = settings.WorkingDirectory ?? _environment.WorkingDirectory;
+                info.WorkingDirectory = workingDirectory.MakeAbsolute(_environment).FullPath;
             }
 
             // Add environment variables
@@ -96,51 +155,25 @@ namespace Cake.Core.IO
                 }
             }
 
-            // Start and return the process.
-            var process = Process.Start(info);
-
-            if (process == null)
-            {
-                return null;
-            }
-
-            var consoleOutputQueue = settings.RedirectStandardOutput
-                ? SubscribeStandardConsoleOutputQueue(process)
-                : null;
-
-            var consoleErrorQueue = settings.RedirectStandardError
-                ? SubscribeStandardConsoleErrorQueue(process)
-                : null;
-
-            return new ProcessWrapper(process, _log, arguments.FilterUnsafe, consoleOutputQueue, arguments.FilterUnsafe, consoleErrorQueue);
+            return info;
         }
 
-        private static ConcurrentQueue<string> SubscribeStandardConsoleErrorQueue(Process process)
+        private static void SubscribeStandardError(Process process, ProcessWrapper processWrapper)
         {
-            var consoleErrorQueue = new ConcurrentQueue<string>();
             process.ErrorDataReceived += (s, e) =>
             {
-                if (e.Data != null)
-                {
-                    consoleErrorQueue.Enqueue(e.Data);
-                }
+                processWrapper.StandardErrorReceived(e.Data);
             };
             process.BeginErrorReadLine();
-            return consoleErrorQueue;
         }
 
-        private static ConcurrentQueue<string> SubscribeStandardConsoleOutputQueue(Process process)
+        private static void SubscribeStandardOutput(Process process, ProcessWrapper processWrapper)
         {
-            var consoleOutputQueue = new ConcurrentQueue<string>();
             process.OutputDataReceived += (s, e) =>
             {
-                if (e.Data != null)
-                {
-                    consoleOutputQueue.Enqueue(e.Data);
-                }
+                processWrapper.StandardOutputReceived(e.Data);
             };
             process.BeginOutputReadLine();
-            return consoleOutputQueue;
         }
     }
 }

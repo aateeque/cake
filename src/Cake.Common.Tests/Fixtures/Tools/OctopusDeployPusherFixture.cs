@@ -18,14 +18,13 @@ namespace Cake.Common.Tests.Fixtures.Tools
         public List<FilePath> Packages { get; set; }
 
         public OctopusDeployPusherFixture()
-            : base("Octo.exe")
+            : base("octo.exe")
         {
             Packages = new List<FilePath>
             {
                 "MyPackage.1.0.0.zip",
                 "MyOtherPackage.1.0.1.nupkg"
             };
-
             Server = "http://octopus";
             ApiKey = "API-12345";
         }

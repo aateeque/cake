@@ -155,6 +155,7 @@ namespace Cake.Common.Tests.Unit.Tools.NUnit
             [InlineData(-1, "NUnit3: Invalid argument (exit code -1).")]
             [InlineData(-2, "NUnit3: Invalid assembly (exit code -2).")]
             [InlineData(-4, "NUnit3: Invalid test fixture (exit code -4).")]
+            [InlineData(-5, "NUnit3: Unload error (exit code -5).")]
             [InlineData(-100, "NUnit3: Unexpected error (exit code -100).")]
             [InlineData(-10, "NUnit3: Unrecognised error (exit code -10).")]
             public void Should_Throw_If_Process_Has_A_Non_Zero_Exit_Code(int exitCode, string expectedMessage)
@@ -215,10 +216,11 @@ namespace Cake.Common.Tests.Unit.Tools.NUnit
                 fixture.Settings.Seed = 6;
                 fixture.Settings.Workers = 7;
                 fixture.Settings.StopOnError = true;
+                fixture.Settings.SkipNonTestAssemblies = true;
                 fixture.Settings.Work = "out";
                 fixture.Settings.OutputFile = "stdout.txt";
-                fixture.Settings.ErrorOutputFile = "stderr.txt";
                 #pragma warning disable 0618
+                fixture.Settings.ErrorOutputFile = "stderr.txt";
                 fixture.Settings.Full = true;
                 #pragma warning restore 0618
                 fixture.Settings.Results = new[]
@@ -242,6 +244,7 @@ namespace Cake.Common.Tests.Unit.Tools.NUnit
                 fixture.Settings.ShadowCopy = true;
                 fixture.Settings.Agents = 3;
                 fixture.Settings.TraceLevel = NUnitInternalTraceLevel.Debug;
+                fixture.Settings.ConfigFile = "app.config";
                 fixture.Settings.Params = new Dictionary<string, string>
                 {
                     ["one"] = "1",
@@ -255,7 +258,7 @@ namespace Cake.Common.Tests.Unit.Tools.NUnit
                 // Then
                 Assert.Equal("\"/Working/Test1.dll\" --test=Test1,Test2 \"--testlist=/Working/Testlist.txt\" " +
                         "--where \"cat==Data\" --timeout=5 --seed=6 --workers=7 " +
-                        "--stoponerror \"--work=/Working/out\" \"--out=/Working/stdout.txt\" " +
+                        "--stoponerror --skipnontestassemblies \"--work=/Working/out\" \"--out=/Working/stdout.txt\" " +
                         "\"--err=/Working/stderr.txt\" --full " +
                         "\"--result=/Working/NewTestResult.xml;format=nunit2;transform=/Working/nunit2.xslt\" " +
                         "\"--result=/Working/NewTestResult2.xml;format=nunit3\" " +
@@ -264,6 +267,7 @@ namespace Cake.Common.Tests.Unit.Tools.NUnit
                         "--dispose-runners --shadowcopy --agents=3 " +
                         "--process=InProcess --domain=Single " +
                         "--trace=verbose " +
+                        "\"--configfile=/Working/app.config\" " +
                         "\"--params=one=1\" " +
                         "\"--params=two=2\" " +
                         "\"--params=three=3\"", result.Args);

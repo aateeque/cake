@@ -73,7 +73,7 @@ namespace Cake.Common.Build.TFBuild
         /// <param name="type">Type of the new timeline record.</param>
         /// <param name="order">Order of the timeline record.</param>
         /// <param name="data">Additional data for the new timeline record.</param>
-        /// <returns>The timeilne record ID.</returns>
+        /// <returns>The timeline record ID.</returns>
         Guid CreateNewRecord(string name, string type, int order, TFBuildRecordData data);
 
         /// <summary>
@@ -150,6 +150,19 @@ namespace Cake.Common.Build.TFBuild
         void UploadArtifact(string folderName, FilePath file, string artifactName);
 
         /// <summary>
+        /// Upload local directory as a container folder, and create an artifact.
+        /// </summary>
+        /// <param name="directory">Path to the local directory.</param>
+        void UploadArtifactDirectory(DirectoryPath directory);
+
+        /// <summary>
+        /// Upload local directory as a container folder, and create an artifact with the specified name.
+        /// </summary>
+        /// <param name="directory">Path to the local directory.</param>
+        /// <param name="artifactName">The artifact name.</param>
+        void UploadArtifactDirectory(DirectoryPath directory, string artifactName);
+
+        /// <summary>
         /// Upload additional log to build container's <c>logs/tool</c> folder.
         /// </summary>
         /// <param name="logFile">The log file.</param>
@@ -172,5 +185,31 @@ namespace Cake.Common.Build.TFBuild
         /// </remarks>
         /// <param name="tag">The tag.</param>
         void AddBuildTag(string tag);
+
+        /// <summary>
+        /// Publishes and uploads tests results.
+        /// </summary>
+        /// <param name="data">The publish test results data</param>
+        void PublishTestResults(TFBuildPublishTestResultsData data);
+
+        /// <summary>
+        /// Publishes and uploads code coverage results
+        /// </summary>
+        /// <param name="data">The code coverage data</param>
+        void PublishCodeCoverage(TFBuildPublishCodeCoverageData data);
+
+        /// <summary>
+        /// Publishes and uploads code coverage results.
+        /// </summary>
+        /// <param name="summaryFilePath">The code coverage summary file path.</param>
+        /// <param name="data">The code coverage data</param>
+        void PublishCodeCoverage(FilePath summaryFilePath, TFBuildPublishCodeCoverageData data);
+
+        /// <summary>
+        /// Publishes and uploads code coverage results.
+        /// </summary>
+        /// <param name="summaryFilePath">The code coverage summary file path.</param>
+        /// <param name="action">The configuration action for the code coverage data.</param>
+        void PublishCodeCoverage(FilePath summaryFilePath, Action<TFBuildPublishCodeCoverageData> action);
     }
 }

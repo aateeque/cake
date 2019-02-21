@@ -242,6 +242,26 @@ namespace Cake.Tests.Unit.Arguments
                 }
 
                 [Theory]
+                [InlineData("-showtree", true)]
+                [InlineData("-showtree=true", true)]
+                [InlineData("-showtree=false", false)]
+                [InlineData("-tree", true)]
+                [InlineData("-tree=true", true)]
+                [InlineData("-tree=false", false)]
+                public void Can_Parse_ShowTree(string input, bool expected)
+                {
+                    // Given
+                    var fixture = new ArgumentParserFixture();
+                    var parser = new ArgumentParser(fixture.Log, fixture.VerbosityParser);
+
+                    // When
+                    var result = parser.Parse(new[] { "build.cake", input });
+
+                    // Then
+                    Assert.Equal(expected, result.ShowTree);
+                }
+
+                [Theory]
                 [InlineData("-dryrun", true)]
                 [InlineData("-dryrun=true", true)]
                 [InlineData("-dryrun=false", false)]
@@ -303,6 +323,23 @@ namespace Cake.Tests.Unit.Arguments
                 }
 
                 [Theory]
+                [InlineData("-info", true)]
+                [InlineData("-info=true", true)]
+                [InlineData("-info=false", false)]
+                public void Can_Parse_Info(string input, bool expected)
+                {
+                    // Given
+                    var fixture = new ArgumentParserFixture();
+                    var parser = new ArgumentParser(fixture.Log, fixture.VerbosityParser);
+
+                    // When
+                    var result = parser.Parse(new[] { "build.cake", input });
+
+                    // Then
+                    Assert.Equal(expected, result.ShowInfo);
+                }
+
+                [Theory]
                 [InlineData("-debug", true)]
                 [InlineData("-debug=true", true)]
                 [InlineData("-debug=false", false)]
@@ -320,23 +357,6 @@ namespace Cake.Tests.Unit.Arguments
 
                     // Then
                     Assert.Equal(expected, result.PerformDebug);
-                }
-
-                [Theory]
-                [InlineData("-mono", true)]
-                [InlineData("-mono=true", true)]
-                [InlineData("-mono=false", false)]
-                public void Can_Parse_Mono(string input, bool expected)
-                {
-                    // Given
-                    var fixture = new ArgumentParserFixture();
-                    var parser = new ArgumentParser(fixture.Log, fixture.VerbosityParser);
-
-                    // When
-                    var result = parser.Parse(new[] { "build.cake", input });
-
-                    // Then
-                    Assert.Equal(expected, result.Mono);
                 }
             }
 
@@ -471,6 +491,23 @@ namespace Cake.Tests.Unit.Arguments
                 }
 
                 [Theory]
+                [InlineData("--showtree", true)]
+                [InlineData("--showtree=true", true)]
+                [InlineData("--showtree=false", false)]
+                public void Can_Parse_ShowTree(string input, bool expected)
+                {
+                    // Given
+                    var fixture = new ArgumentParserFixture();
+                    var parser = new ArgumentParser(fixture.Log, fixture.VerbosityParser);
+
+                    // When
+                    var result = parser.Parse(new[] { "build.cake", input });
+
+                    // Then
+                    Assert.Equal(expected, result.ShowTree);
+                }
+
+                [Theory]
                 [InlineData("--dryrun", true)]
                 [InlineData("--dryrun=true", true)]
                 [InlineData("--dryrun=false", false)]
@@ -531,6 +568,23 @@ namespace Cake.Tests.Unit.Arguments
                 }
 
                 [Theory]
+                [InlineData("--info", true)]
+                [InlineData("--info=true", true)]
+                [InlineData("--info=false", false)]
+                public void Can_Parse_Info(string input, bool expected)
+                {
+                    // Given
+                    var fixture = new ArgumentParserFixture();
+                    var parser = new ArgumentParser(fixture.Log, fixture.VerbosityParser);
+
+                    // When
+                    var result = parser.Parse(new[] { "build.cake", input });
+
+                    // Then
+                    Assert.Equal(expected, result.ShowInfo);
+                }
+
+                [Theory]
                 [InlineData("--debug", true)]
                 [InlineData("--debug=true", true)]
                 [InlineData("--debug=false", false)]
@@ -548,23 +602,6 @@ namespace Cake.Tests.Unit.Arguments
                 }
 
                 [Theory]
-                [InlineData("--mono", true)]
-                [InlineData("--mono=true", true)]
-                [InlineData("--mono=false", false)]
-                public void Can_Parse_Mono(string input, bool expected)
-                {
-                    // Given
-                    var fixture = new ArgumentParserFixture();
-                    var parser = new ArgumentParser(fixture.Log, fixture.VerbosityParser);
-
-                    // When
-                    var result = parser.Parse(new[] { "build.cake", input });
-
-                    // Then
-                    Assert.Equal(expected, result.Mono);
-                }
-
-                [Theory]
                 [InlineData("--bootstrap", true)]
                 [InlineData("--bootstrap=true", true)]
                 [InlineData("--bootstrap=false", false)]
@@ -579,6 +616,23 @@ namespace Cake.Tests.Unit.Arguments
 
                     // Then
                     Assert.Equal(expected, result.Bootstrap);
+                }
+
+                [Theory]
+                [InlineData("--exclusive", true)]
+                [InlineData("--exclusive=true", true)]
+                [InlineData("--exclusive=false", false)]
+                public void Can_Parse_Exclusive(string input, bool expected)
+                {
+                    // Given
+                    var fixture = new ArgumentParserFixture();
+                    var parser = new ArgumentParser(fixture.Log, fixture.VerbosityParser);
+
+                    // When
+                    var result = parser.Parse(new[] { "build.cake", input });
+
+                    // Then
+                    Assert.Equal(expected, result.Exclusive);
                 }
             }
         }

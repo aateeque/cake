@@ -95,6 +95,12 @@ namespace Cake.Common.Tools.DotNetCore.Publish
                 builder.Append(settings.VersionSuffix);
             }
 
+            // No Build
+            if (settings.NoBuild)
+            {
+                builder.Append("--no-build");
+            }
+
             // No Dependencies
             if (settings.NoDependencies)
             {
@@ -105,6 +111,36 @@ namespace Cake.Common.Tools.DotNetCore.Publish
             if (settings.NoRestore)
             {
                 builder.Append("--no-restore");
+            }
+
+            // Force
+            if (settings.Force)
+            {
+                builder.Append("--force");
+            }
+
+            // Self contained
+            if (settings.SelfContained.HasValue)
+            {
+                builder.Append("--self-contained");
+                if (settings.SelfContained.Value)
+                {
+                    builder.Append("true");
+                }
+                else
+                {
+                    builder.Append("false");
+                }
+            }
+
+            // Sources
+            if (settings.Sources != null)
+            {
+                foreach (var source in settings.Sources)
+                {
+                    builder.Append("--source");
+                    builder.AppendQuoted(source);
+                }
             }
 
             if (settings.MSBuildSettings != null)

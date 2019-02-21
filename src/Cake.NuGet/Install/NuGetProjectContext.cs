@@ -3,9 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Cake.Core.Diagnostics;
+using NuGet.Configuration;
 using NuGet.Packaging;
+using NuGet.Packaging.Signing;
 using NuGet.ProjectManagement;
 
 namespace Cake.NuGet.Install
@@ -14,13 +18,15 @@ namespace Cake.NuGet.Install
     {
         private readonly ICakeLog _log;
 
-        public NuGetProjectContext(ICakeLog log)
+        public NuGetProjectContext(ISettings settings, ICakeLog log)
         {
             _log = log ?? throw new ArgumentNullException(nameof(log));
-            PackageExtractionContext = new PackageExtractionContext(new NuGetLogger(_log))
-            {
-                PackageSaveMode = PackageSaveMode.Nuspec | PackageSaveMode.Files | PackageSaveMode.Nupkg
-            };
+            var nuGetLogger = new NuGetLogger(_log);
+            PackageExtractionContext = new PackageExtractionContext(
+                PackageSaveMode.Nuspec | PackageSaveMode.Files | PackageSaveMode.Nupkg,
+                XmlDocFileSaveMode.None,
+                ClientPolicyContext.GetClientPolicy(settings, nuGetLogger),
+                nuGetLogger);
         }
 
         public void Log(MessageLevel level, string message, params object[] args)
@@ -54,12 +60,12 @@ namespace Cake.NuGet.Install
 
         public ISourceControlManagerProvider SourceControlManagerProvider => null;
 
-        public ExecutionContext ExecutionContext => null;
+        public global::NuGet.ProjectManagement.ExecutionContext ExecutionContext => null;
 
         public XDocument OriginalPackagesConfig { get; set; }
 
         public NuGetActionType ActionType { get; set; }
 
-        public TelemetryServiceHelper TelemetryService { get; set; }
+        public Guid OperationId { get; set; }
     }
 }

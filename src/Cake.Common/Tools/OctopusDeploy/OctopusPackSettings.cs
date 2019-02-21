@@ -4,14 +4,13 @@
 
 using System.Collections.Generic;
 using Cake.Core.IO;
-using Cake.Core.Tooling;
 
 namespace Cake.Common.Tools.OctopusDeploy
 {
     /// <summary>
     /// Contains the settings used by OctoPack.
     /// </summary>
-    public sealed class OctopusPackSettings : ToolSettings
+    public sealed class OctopusPackSettings : OctopusDeployToolSettings
     {
         /// <summary>
         /// Gets or sets the version.
@@ -61,10 +60,10 @@ namespace Cake.Common.Tools.OctopusDeploy
         /// <summary>
         /// Gets or sets the file patterns to include. If none are specified, defaults to **.
         /// </summary>
-        public ICollection<string> Include { get; set; }
+        public ICollection<string> Include { get; set; } = new List<string>();
 
         /// <summary>
-        /// Gets or sets a value indicating whether to allow an existing package with the same ID/version to be overwriten.
+        /// Gets or sets a value indicating whether to allow an existing package with the same ID/version to be overwritten.
         /// </summary>
         public bool Overwrite { get; set; }
     }

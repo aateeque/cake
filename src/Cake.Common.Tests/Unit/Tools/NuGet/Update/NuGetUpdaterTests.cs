@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using Cake.Common.Tests.Fixtures.Tools.NuGet.Update;
 using Cake.Common.Tools.NuGet;
@@ -229,6 +230,8 @@ namespace Cake.Common.Tests.Unit.Tools.NuGet.Update
             [InlineData(NuGetMSBuildVersion.MSBuild4, "update \"/Working/packages.config\" -MSBuildVersion 4 -NonInteractive")]
             [InlineData(NuGetMSBuildVersion.MSBuild12, "update \"/Working/packages.config\" -MSBuildVersion 12 -NonInteractive")]
             [InlineData(NuGetMSBuildVersion.MSBuild14, "update \"/Working/packages.config\" -MSBuildVersion 14 -NonInteractive")]
+            [InlineData(NuGetMSBuildVersion.MSBuild15_9, "update \"/Working/packages.config\" -MSBuildVersion 15.9 -NonInteractive")]
+            [InlineData(NuGetMSBuildVersion.MSBuild16_0, "update \"/Working/packages.config\" -MSBuildVersion 16.0 -NonInteractive")]
             public void Should_Add_MSBuildVersion_To_Arguments_If_Set(NuGetMSBuildVersion msBuildVersion, string expected)
             {
                 // Given
@@ -240,6 +243,20 @@ namespace Cake.Common.Tests.Unit.Tools.NuGet.Update
 
                 // Then
                 Assert.Equal(expected, result.Args);
+            }
+
+            [Fact]
+            public void Should_Add_Version_To_Arguments_If_Set()
+            {
+                // Given
+                var fixture = new NuGetUpdateFixture();
+                fixture.Settings.Version = "1.0.0.0";
+
+                // When
+                var result = fixture.Run();
+
+                // Then
+                Assert.Equal("update \"/Working/packages.config\" -Version 1.0.0.0 -NonInteractive", result.Args);
             }
         }
     }

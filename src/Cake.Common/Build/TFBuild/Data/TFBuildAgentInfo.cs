@@ -71,7 +71,7 @@ namespace Cake.Common.Build.TFBuild.Data
         /// <value>
         /// The name of the machine on which the agent is installed.
         /// </value>
-        public string MachineName => GetEnvironmentString("AGENT_MACHINE_NAME");
+        public string MachineName => GetEnvironmentString("AGENT_MACHINENAME");
 
         /// <summary>
         /// Gets a value indicating whether the current agent is a hosted agent.
@@ -79,6 +79,6 @@ namespace Cake.Common.Build.TFBuild.Data
         /// <value>
         /// <c>true</c> if the current agent is a hosted agent; otherwise, <c>false</c>.
         /// </value>
-        public bool IsHosted => Name == "Hosted Agent";
+        public bool IsHosted => Name != null && Name.StartsWith("Hosted");
     }
 }

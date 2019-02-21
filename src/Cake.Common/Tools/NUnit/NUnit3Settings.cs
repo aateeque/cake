@@ -81,6 +81,16 @@ namespace Cake.Common.Tools.NUnit
         public bool StopOnError { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether execution of the test run should
+        /// skip any non-test assemblies specified, without error.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if execution of the test run should skip any non-test assemblies specified, without error;
+        /// otherwise, <c>false</c>.
+        /// </value>
+        public bool SkipNonTestAssemblies { get; set; }
+
+        /// <summary>
         /// Gets or sets the directory to use for output files. If
         /// not specified, defaults to the current directory.
         /// </summary>
@@ -99,6 +109,7 @@ namespace Cake.Common.Tools.NUnit
         /// Gets or sets the location that NUnit should write test error output.
         /// </summary>
         /// <value>The location that NUnit should write test error output.</value>
+        [Obsolete("This argument was removed from NUnit3", false)]
         public FilePath ErrorOutputFile { get; set; }
 
         /// <summary>
@@ -115,7 +126,7 @@ namespace Cake.Common.Tools.NUnit
         /// Gets or sets the results that should be saved.
         /// </summary>
         /// <value>The package owners.</value>
-        public ICollection<NUnit3Result> Results { get; set; }
+        public ICollection<NUnit3Result> Results { get; set; } = new List<NUnit3Result>();
 
         /// <summary>
         /// Gets or sets a value indicating whether to generate the XML result file.
@@ -236,12 +247,20 @@ namespace Cake.Common.Tools.NUnit
         public int? Agents { get; set; }
 
         /// <summary>
-        /// Gets or sets the params that should be passed to the runner.
+        /// Gets or sets a value indicating the path to an alternative app.config file to load.
+        /// </summary>
+        /// <value>The location that NUnit should load an alternative app.config file from.</value>
+        public FilePath ConfigFile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parameters that should be passed to the runner.
         /// </summary>
         /// <value>
-        /// List of parametes (key/value) which are passed to the runner.
+        /// List of parameters (key/value) which are passed to the runner.
         /// </value>
-        public IDictionary<string, string> Params { get; set; }
+        public IDictionary<string, string> Params { get; set; } =
+            // “Case-sensitive.” https://github.com/nunit/docs/wiki/Console-Command-Line#options
+            new Dictionary<string, string>(StringComparer.Ordinal);
 
         /// <summary>
         /// Gets or sets the level of detail at which the runner should write to its internal trace log.

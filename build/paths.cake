@@ -34,6 +34,10 @@ public class BuildPaths
 
         var testCoverageOutputFilePath = testResultsDir.CombineWithFilePath("OpenCover.xml");
 
+        var integrationTestsBin = context.MakeAbsolute(context.Directory("./tests/integration/tools"));
+        var integrationTestsBinFullFx = integrationTestsBin.Combine("Cake");
+        var integrationTestsBinNetCore = integrationTestsBin.Combine("Cake.CoreCLR");
+
         // Directories
         var buildDirectories = new BuildDirectories(
             artifactsDir,
@@ -41,7 +45,9 @@ public class BuildPaths
             nugetRoot,
             artifactsBinDir,
             artifactsBinFullFx,
-            artifactsBinNetCore);
+            artifactsBinNetCore,
+            integrationTestsBinFullFx,
+            integrationTestsBinNetCore);
 
         // Files
         var buildFiles = new BuildFiles(
@@ -79,13 +85,15 @@ public class BuildFiles
 
 public class BuildDirectories
 {
-    public DirectoryPath Artifacts { get; private set; }
-    public DirectoryPath TestResults { get; private set; }
-    public DirectoryPath NugetRoot { get; private set; }
-    public DirectoryPath ArtifactsBin { get; private set; }
-    public DirectoryPath ArtifactsBinFullFx { get; private set; }
-    public DirectoryPath ArtifactsBinNetCore { get; private set; }
-    public ICollection<DirectoryPath> ToClean { get; private set; }
+    public DirectoryPath Artifacts { get; }
+    public DirectoryPath TestResults { get; }
+    public DirectoryPath NuGetRoot { get; }
+    public DirectoryPath ArtifactsBin { get; }
+    public DirectoryPath ArtifactsBinFullFx { get; }
+    public DirectoryPath ArtifactsBinNetCore { get; }
+    public DirectoryPath IntegrationTestsBinFullFx { get; }
+    public DirectoryPath IntegrationTestsBinNetCore { get; }
+    public ICollection<DirectoryPath> ToClean { get; }
 
     public BuildDirectories(
         DirectoryPath artifactsDir,
@@ -93,22 +101,28 @@ public class BuildDirectories
         DirectoryPath nugetRoot,
         DirectoryPath artifactsBinDir,
         DirectoryPath artifactsBinFullFx,
-        DirectoryPath artifactsBinNetCore
+        DirectoryPath artifactsBinNetCore,
+        DirectoryPath integrationTestsBinFullFx,
+        DirectoryPath integrationTestsBinNetCore
         )
     {
         Artifacts = artifactsDir;
         TestResults = testResultsDir;
-        NugetRoot = nugetRoot;
+        NuGetRoot = nugetRoot;
         ArtifactsBin = artifactsBinDir;
         ArtifactsBinFullFx = artifactsBinFullFx;
         ArtifactsBinNetCore = artifactsBinNetCore;
+        IntegrationTestsBinFullFx = integrationTestsBinFullFx;
+        IntegrationTestsBinNetCore = integrationTestsBinNetCore;
         ToClean = new[] {
             Artifacts,
             TestResults,
-            NugetRoot,
+            NuGetRoot,
             ArtifactsBin,
             ArtifactsBinFullFx,
-            ArtifactsBinNetCore
+            ArtifactsBinNetCore,
+            IntegrationTestsBinFullFx,
+            IntegrationTestsBinNetCore
         };
     }
 }

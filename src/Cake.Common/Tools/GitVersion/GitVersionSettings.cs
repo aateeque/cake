@@ -13,7 +13,7 @@ namespace Cake.Common.Tools.GitVersion
     public sealed class GitVersionSettings : ToolSettings
     {
         /// <summary>
-        /// Gets or sets the path for the git repository to use.
+        /// Gets or sets the path for the Git repository to use.
         /// </summary>
         public DirectoryPath RepositoryPath { get; set; }
 
@@ -23,12 +23,12 @@ namespace Cake.Common.Tools.GitVersion
         public GitVersionOutput? OutputType { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to update all the assemblyinfo files.
+        /// Gets or sets a value indicating whether to update all the AssemblyInfo files.
         /// </summary>
         public bool UpdateAssemblyInfo { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to update all the assemblyinfo files.
+        /// Gets or sets whether to update all the AssemblyInfo files.
         /// </summary>
         public FilePath UpdateAssemblyInfoFilePath { get; set; }
 
@@ -48,7 +48,7 @@ namespace Cake.Common.Tools.GitVersion
         public string Password { get; set; }
 
         /// <summary>
-        /// Gets or sets the git url to use if using dynamic repositories.
+        /// Gets or sets the Git URL to use if using dynamic repositories.
         /// </summary>
         public string Url { get; set; }
 

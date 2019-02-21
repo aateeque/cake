@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using Cake.Common.IO;
 using Cake.Common.Tools.DotNetCore.Build;
+using Cake.Common.Tools.DotNetCore.BuildServer;
 using Cake.Common.Tools.DotNetCore.Clean;
 using Cake.Common.Tools.DotNetCore.Execute;
 using Cake.Common.Tools.DotNetCore.MSBuild;
@@ -659,7 +660,7 @@ namespace Cake.Common.Tools.DotNetCore
         }
 
         /// <summary>
-        /// Deletes a package from the NuGet.org.
+        /// Deletes a package from nuget.org.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="packageName">Name of package to delete.</param>
@@ -677,7 +678,7 @@ namespace Cake.Common.Tools.DotNetCore
         }
 
         /// <summary>
-        /// Deletes a specific version of a package from the NuGet.org.
+        /// Deletes a specific version of a package from nuget.org.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="packageName">Name of package to delete.</param>
@@ -950,11 +951,11 @@ namespace Cake.Common.Tools.DotNetCore
         /// <example>
         /// <para>Specify the path to the .csproj file in the test project</para>
         /// <code>
-        ///     DotNetCoreTest("./test/Project.Tests/Project.Tests.csproj");
+        ///     DotNetCoreVSTest("./test/Project.Tests/bin/Release/netcoreapp2.1/Project.Tests.dll");
         /// </code>
         /// <para>You could also specify a glob pattern to run multiple test projects.</para>
         /// <code>
-        ///     DotNetCoreTest("./**/*.Tests.csproj");
+        ///     DotNetCoreVSTest("./**/bin/Release/netcoreapp2.1/*.Tests.dll");
         /// </code>
         /// </example>
         [CakeMethodAlias]
@@ -971,24 +972,24 @@ namespace Cake.Common.Tools.DotNetCore
         /// <example>
         /// <para>Specify the path to the .csproj file in the test project</para>
         /// <code>
-        ///     var settings = new DotNetCoreTestSettings
+        ///     var settings = new DotNetCoreVSTestSettings
         ///     {
         ///         Framework = "FrameworkCore10",
         ///         Platform = "x64"
         ///     };
         ///
-        ///     DotNetCoreTest("./test/Project.Tests/Project.Tests.csproj", settings);
+        ///     DotNetCoreTest("./test/Project.Tests/bin/Release/netcoreapp2.1/Project.Tests.dll", settings);
         /// </code>
         /// <para>You could also specify a glob pattern to run multiple test projects.</para>
         /// <code>
-        ///     var settings = new DotNetCoreTestSettings
+        ///     var settings = new DotNetCoreVSTestSettings
         ///     {
         ///         Framework = "FrameworkCore10",
         ///         Platform = "x64",
         ///         Parallel = true
         ///     };
         ///
-        ///     DotNetCoreTest("./**/*.Tests.csproj", settings);
+        ///     DotNetCoreVSTest("./**/bin/Release/netcoreapp2.1/*.Tests.dll", settings);
         /// </code>
         /// </example>
         [CakeMethodAlias]
@@ -1009,13 +1010,13 @@ namespace Cake.Common.Tools.DotNetCore
         /// <param name="settings">The settings.</param>
         /// <example>
         /// <code>
-        ///     var settings = new DotNetCoreTestSettings
+        ///     var settings = new DotNetCoreVSTestSettings
         ///     {
         ///         Framework = "FrameworkCore10",
         ///         Platform = "x64"
         ///     };
         ///
-        ///     DotNetCoreTest(new[] { (FilePath)"./Test/Cake.Common.Tests.csproj" }, settings);
+        ///     DotNetCoreVSTest(new[] { (FilePath)"./test/Project.Tests/bin/Release/netcoreapp2.1/Project.Tests.dll" }, settings);
         /// </code>
         /// <para>You could also specify a task that runs multiple test projects.</para>
         /// <para>Cake task:</para>
@@ -1023,16 +1024,16 @@ namespace Cake.Common.Tools.DotNetCore
         /// Task("Test")
         ///     .Does(() =>
         /// {
-        ///     var settings = new DotNetCoreTestSettings
+        ///     var settings = new DotNetCoreVSTestSettings
         ///     {
         ///         Framework = "FrameworkCore10",
         ///         Platform = "x64",
         ///         Parallel = true
         ///     };
         ///
-        ///     var projectFiles = GetFiles("./test/**/*.csproj");
+        ///     var testFiles = GetFiles("./test/**/bin/Release/netcoreapp2.1/*.Test.dll");
         ///
-        ///     DotNetCoreTest(projectFiles, settings);
+        ///     DotNetCoreVSTest(testFiles, settings);
         /// });
         /// </code>
         /// </example>
@@ -1056,7 +1057,62 @@ namespace Cake.Common.Tools.DotNetCore
         }
 
         /// <summary>
-        /// /// Execute an .NET Core Extensibility Tool.
+        /// Execute an .NET Core Extensibility Tool.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="command">The command to execute.</param>
+        /// <example>
+        /// <code>
+        ///     DotNetCoreTool("cake");
+        /// </code>
+        /// </example>
+        [CakeMethodAlias]
+        [CakeAliasCategory("Tool")]
+        [CakeNamespaceImport("Cake.Common.Tools.DotNetCore.Tool")]
+        public static void DotNetCoreTool(this ICakeContext context, string command)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var arguments = new ProcessArgumentBuilder();
+            var settings = new DotNetCoreToolSettings();
+
+            context.DotNetCoreTool(null, command, arguments, settings);
+        }
+
+        /// <summary>
+        /// Execute an .NET Core Extensibility Tool.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="command">The command to execute.</param>
+        /// <param name="settings">The settings.</param>
+        /// <example>
+        /// <code>
+        ///     DotNetCoreTool("cake"
+        ///             new DotNetCoreToolSettings {
+        ///                 DiagnosticOutput = true
+        ///             });
+        /// </code>
+        /// </example>
+        [CakeMethodAlias]
+        [CakeAliasCategory("Tool")]
+        [CakeNamespaceImport("Cake.Common.Tools.DotNetCore.Tool")]
+        public static void DotNetCoreTool(this ICakeContext context, string command, DotNetCoreToolSettings settings)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var arguments = new ProcessArgumentBuilder();
+
+            context.DotNetCoreTool(null, command, arguments, settings);
+        }
+
+        /// <summary>
+        /// Execute an .NET Core Extensibility Tool.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <param name="projectPath">The project path.</param>
@@ -1135,6 +1191,51 @@ namespace Cake.Common.Tools.DotNetCore
             var runner = new DotNetCoreToolRunner(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools);
 
             runner.Execute(projectPath, command, arguments, settings);
+        }
+
+        /// <summary>
+        /// Shuts down build servers that are started from dotnet.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <example>
+        /// <code>
+        ///     DotNetCoreBuildServerShutdown();
+        /// </code>
+        /// </example>
+        [CakeMethodAlias]
+        [CakeAliasCategory("Build Server")]
+        [CakeNamespaceImport("Cake.Common.Tools.DotNetCore.BuildServer")]
+        public static void DotNetCoreBuildServerShutdown(this ICakeContext context)
+        {
+            context.DotNetCoreBuildServerShutdown(null);
+        }
+
+        /// <summary>
+        /// Shuts down build servers that are started from dotnet.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="settings">The settings.</param>
+        /// <example>
+        /// <code>
+        ///     DotNetCoreBuildServerShutdown(
+        ///         new DotNetCoreBuildServerSettings {
+        ///             MSBuild = true
+        ///         });
+        /// </code>
+        /// </example>
+        [CakeMethodAlias]
+        [CakeAliasCategory("Build Server")]
+        [CakeNamespaceImport("Cake.Common.Tools.DotNetCore.BuildServer")]
+        public static void DotNetCoreBuildServerShutdown(this ICakeContext context, DotNetCoreBuildServerSettings settings)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            var buildServer = new DotNetCoreBuildServer(context.FileSystem, context.Environment, context.ProcessRunner, context.Tools);
+
+            buildServer.Shutdown(settings ?? new DotNetCoreBuildServerSettings());
         }
     }
 }

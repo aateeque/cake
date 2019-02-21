@@ -73,8 +73,7 @@ namespace Cake.Common
         [CakeMethodAlias]
         public static int StartProcess(this ICakeContext context, FilePath fileName, ProcessSettings settings)
         {
-            IEnumerable<string> redirectedOutput;
-            return StartProcess(context, fileName, settings, out redirectedOutput);
+            return StartProcess(context, fileName, settings, out var redirectedOutput);
         }
 
         /// <summary>
@@ -157,7 +156,8 @@ namespace Cake.Common
         ///         "ping",
         ///         new ProcessSettings {
         ///             Arguments = "localhost",
-        ///             RedirectStandardOutput = true
+        ///             RedirectStandardOutput = true,
+        ///             RedirectStandardError = true
         ///         },
         ///         out redirectedStandardOutput,
         ///         out redirectedErrorOutput
@@ -171,8 +171,8 @@ namespace Cake.Common
         /// {
         ///     throw new Exception(
         ///         string.Format(
-        ///             "Errors ocurred: {0}",
-        ///             string.Join(", ", redirectedErrorOutput));
+        ///             "Errors occurred: {0}",
+        ///             string.Join(", ", redirectedErrorOutput)));
         /// }
         ///
         /// // This should output 0 as valid arguments supplied
@@ -253,9 +253,12 @@ namespace Cake.Common
                 throw new ArgumentNullException(nameof(settings));
             }
 
-            // Get the working directory.
-            var workingDirectory = settings.WorkingDirectory ?? context.Environment.WorkingDirectory;
-            settings.WorkingDirectory = workingDirectory.MakeAbsolute(context.Environment);
+            if (!settings.NoWorkingDirectory)
+            {
+                // Set the working directory.
+                var workingDirectory = settings.WorkingDirectory ?? context.Environment.WorkingDirectory;
+                settings.WorkingDirectory = workingDirectory.MakeAbsolute(context.Environment);
+            }
 
             // Start the process.
             var process = context.ProcessRunner.Start(fileName, settings);

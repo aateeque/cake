@@ -66,6 +66,10 @@ namespace Cake.Common.Tools.XUnit
                 {
                     throw new CakeException("Cannot generate NUnit XML report when no output directory has been set.");
                 }
+                if (settings.JUnitReport)
+                {
+                    throw new CakeException("Cannot generate JUnit XML report when no output directory has been set.");
+                }
             }
             _useX86 = settings.UseX86;
             var assemblies = assemblyPaths as FilePath[] ?? assemblyPaths.ToArray();
@@ -105,6 +109,17 @@ namespace Cake.Common.Tools.XUnit
                 builder.AppendQuoted(outputPath.FullPath);
             }
 
+            // Generate JUnit Style XML report?
+            if (settings.JUnitReport)
+            {
+                var reportFileName = XUnitRunnerUtilities.GetReportFileName(assemblyPaths, settings);
+                var assemblyFilename = reportFileName.AppendExtension(".xml");
+                var outputPath = settings.OutputDirectory.MakeAbsolute(_environment).GetFilePath(assemblyFilename);
+
+                builder.Append("-junit");
+                builder.AppendQuoted(outputPath.FullPath);
+            }
+
             // Generate HTML report?
             if (settings.HtmlReport)
             {
@@ -128,7 +143,7 @@ namespace Cake.Common.Tools.XUnit
             }
 
             // parallelize test execution?
-            if (settings.Parallelism != ParallelismOption.None)
+            if (settings.Parallelism.HasValue)
             {
                 builder.Append("-parallel " + settings.Parallelism.ToString().ToLowerInvariant());
             }

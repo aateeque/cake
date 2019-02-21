@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using Cake.Core.Tooling;
 
@@ -16,12 +17,12 @@ namespace Cake.Common.Tools.NuGet.Update
         /// Gets or sets the package ids to update.
         /// </summary>
         /// <value>The package ids to update.</value>
-        public ICollection<string> Id { get; set; }
+        public ICollection<string> Id { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets a list of package sources to use for this command.
         /// </summary>
-        public ICollection<string> Source { get; set; }
+        public ICollection<string> Source { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets a value indicating whether to look for updates with the highest
@@ -53,5 +54,11 @@ namespace Cake.Common.Tools.NuGet.Update
         /// </summary>
         /// <value>The version of MSBuild to be used with this command.</value>
         public NuGetMSBuildVersion? MSBuildVersion { get; set; }
+
+        /// <summary>
+        /// Gets or sets package version to be used with this command.
+        /// </summary>
+        /// <value>The package version to be used with this command.</value>
+        public string Version { get; set; }
     }
 }

@@ -141,6 +141,12 @@ namespace Cake.Arguments
                 options.ShowDescription = ParseBooleanValue(value);
             }
 
+            if (name.Equals("showtree", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("tree", StringComparison.OrdinalIgnoreCase))
+            {
+                options.ShowTree = ParseBooleanValue(value);
+            }
+
             if (name.Equals("dryrun", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("noop", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("whatif", StringComparison.OrdinalIgnoreCase))
@@ -160,20 +166,25 @@ namespace Cake.Arguments
                 options.ShowVersion = ParseBooleanValue(value);
             }
 
+            if (name.Equals("info", StringComparison.OrdinalIgnoreCase))
+            {
+                options.ShowInfo = ParseBooleanValue(value);
+            }
+
             if (name.Equals("debug", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("d", StringComparison.OrdinalIgnoreCase))
             {
                 options.PerformDebug = ParseBooleanValue(value);
             }
 
-            if (name.Equals("mono", StringComparison.OrdinalIgnoreCase))
-            {
-                options.Mono = ParseBooleanValue(value);
-            }
-
             if (name.Equals("bootstrap", StringComparison.OrdinalIgnoreCase))
             {
                 options.Bootstrap = ParseBooleanValue(value);
+            }
+
+            if (name.Equals("exclusive", StringComparison.OrdinalIgnoreCase))
+            {
+                options.Exclusive = ParseBooleanValue(value);
             }
 
             if (options.Arguments.ContainsKey(name))

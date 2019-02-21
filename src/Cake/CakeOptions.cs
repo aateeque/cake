@@ -43,6 +43,14 @@ namespace Cake
         public bool ShowDescription { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to show the task dependency tree
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> to show task tree; otherwise, <c>false</c>.
+        /// </value>
+        public bool ShowTree { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether to perform a dry run.
         /// </summary>
         /// <value>
@@ -75,6 +83,14 @@ namespace Cake
         public bool ShowVersion { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to show additional information.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> to show additional information; otherwise, <c>false</c>.
+        /// </value>
+        public bool ShowInfo { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether an error occurred during parsing.
         /// </summary>
         /// <value>
@@ -83,17 +99,14 @@ namespace Cake
         public bool HasError { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to use the Mono compiler or not.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if the mono compiler should be used; otherwise, <c>false</c>.
-        /// </value>
-        public bool Mono { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether to bootstrap Cake modules.
         /// </summary>
         public bool Bootstrap { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether or not to use the target exclusively.
+        /// </summary>
+        public bool Exclusive { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CakeOptions"/> class.
@@ -104,6 +117,7 @@ namespace Cake
 
             Verbosity = Verbosity.Normal;
             ShowDescription = false;
+            ShowTree = false;
             ShowHelp = false;
         }
     }

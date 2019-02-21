@@ -1,15 +1,20 @@
 // Utilities
 #load "./utilities/paths.cake"
 #load "./utilities/xunit.cake"
+#load "./utilities/context.cake"
 
 // Tests
+#load "setup.cake"
+#load "teardown.cake"
 #load "./Cake.Common/ArgumentAliases.cake"
 #load "./Cake.Common/EnvironmentAliases.cake"
 #load "./Cake.Common/Diagnostics/LoggingAliases.cake"
 #load "./Cake.Common/IO/DirectoryAliases.cake"
 #load "./Cake.Common/IO/FileAliases.cake"
 #load "./Cake.Common/IO/FileAsync.cake"
+#load "./Cake.Common/IO/GlobbingAliases.cake"
 #load "./Cake.Common/IO/ZipAliases.cake"
+#load "./Cake.Common/ProcessAliases.cake"
 #load "./Cake.Common/ReleaseNotesAliases.cake"
 #load "./Cake.Common/Security/SecurityAliases.cake"
 #load "./Cake.Common/Solution/SolutionAliases.cake"
@@ -20,6 +25,7 @@
 #load "./Cake.Common/Tools/Cake/CakeAliases.cake"
 #load "./Cake.Common/Tools/DotNetCore/DotNetCoreAliases.cake"
 #load "./Cake.Common/Tools/NuGet/NuGetAliases.cake"
+#load "./Cake.Common/Tools/TextTransform/TextTransformAliases.cake"
 #load "./Cake.Core/Scripting/AddinDirective.cake"
 #load "./Cake.Core/Scripting/DefineDirective.cake"
 #load "./Cake.Core/Scripting/LoadDirective.cake"
@@ -33,15 +39,6 @@
 //////////////////////////////////////////////////
 
 var target = Argument<string>("target", "Run-All-Tests");
-
-//////////////////////////////////////////////////
-// SETUP / TEARDOWN
-//////////////////////////////////////////////////
-
-Setup(ctx =>
-{
-    CleanDirectory(Paths.Temp);
-});
 
 //////////////////////////////////////////////////
 // TARGETS
@@ -63,7 +60,9 @@ Task("Cake.Common")
     .IsDependentOn("Cake.Common.IO.DirectoryAliases")
     .IsDependentOn("Cake.Common.IO.FileAliases")
     .IsDependentOn("Cake.Common.IO.FileAsync")
+    .IsDependentOn("Cake.Common.IO.GlobbingAliases")
     .IsDependentOn("Cake.Common.IO.ZipAliases")
+    .IsDependentOn("Cake.Common.ProcessAliases")
     .IsDependentOn("Cake.Common.ReleaseNotesAliases")
     .IsDependentOn("Cake.Common.Security.SecurityAliases")
     .IsDependentOn("Cake.Common.Solution.SolutionAliases")
@@ -73,9 +72,11 @@ Task("Cake.Common")
     .IsDependentOn("Cake.Common.Text.TextTransformationAliases")
     .IsDependentOn("Cake.Common.Tools.Cake.CakeAliases")
     .IsDependentOn("Cake.Common.Tools.DotNetCore.DotNetCoreAliases")
-    .IsDependentOn("Cake.Common.Tools.NuGet.NuGetAliases");
+    .IsDependentOn("Cake.Common.Tools.NuGet.NuGetAliases")
+    .IsDependentOn("Cake.Common.Tools.TextTransform.TextTransformAliases");
 
 Task("Run-All-Tests")
+    .IsDependentOn("Setup-Tests")
     .IsDependentOn("Cake.Core")
     .IsDependentOn("Cake.Common");
 

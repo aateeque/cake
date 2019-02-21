@@ -191,6 +191,22 @@ namespace Cake.Common.Tools.MSBuild
         }
 
         /// <summary>
+        /// Sets whether or not copyright information at the start of the program should be shown.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="noLogo"><c>true</c> if no copyright information at the start of the program should be shown; otherwise <c>false</c>.</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings SetNoLogo(this MSBuildSettings settings, bool noLogo)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+            settings.NoLogo = noLogo;
+            return settings;
+        }
+
+        /// <summary>
         /// Sets the build log verbosity.
         /// </summary>
         /// <param name="settings">The settings.</param>
@@ -277,7 +293,97 @@ namespace Cake.Common.Tools.MSBuild
         }
 
         /// <summary>
-        /// Treat warnnings as errors, if no codes specified all errors will be treated as errors.
+        /// Enables the binary logger with all the default settings.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings EnableBinaryLogger(this MSBuildSettings settings)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            settings.BinaryLogger = new MSBuildBinaryLogSettings
+            {
+                Enabled = true,
+                Imports = MSBuildBinaryLogImports.None,
+            };
+
+            return settings;
+        }
+
+        /// <summary>
+        /// Enables the binary logger with the specified log file name and imports.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="fileName">The log file name.</param>
+        /// <param name="imports">The imports.</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings EnableBinaryLogger(this MSBuildSettings settings, string fileName, MSBuildBinaryLogImports imports)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            settings.BinaryLogger = new MSBuildBinaryLogSettings
+            {
+                Enabled = true,
+                FileName = fileName,
+                Imports = imports,
+            };
+
+            return settings;
+        }
+
+        /// <summary>
+        /// Enables the binary logger with the specified log file name and no imports.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="fileName">The log file name.</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings EnableBinaryLogger(this MSBuildSettings settings, string fileName)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            settings.BinaryLogger = new MSBuildBinaryLogSettings
+            {
+                Enabled = true,
+                FileName = fileName,
+                Imports = MSBuildBinaryLogImports.None,
+            };
+
+            return settings;
+        }
+
+        /// <summary>
+        /// Enables the binary logger with the specified imports and default file name.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="imports">The imports.</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings EnableBinaryLogger(this MSBuildSettings settings, MSBuildBinaryLogImports imports)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            settings.BinaryLogger = new MSBuildBinaryLogSettings
+            {
+                Enabled = true,
+                Imports = imports,
+            };
+
+            return settings;
+        }
+
+        /// <summary>
+        /// Treat warnings as errors, if no codes specified all errors will be treated as errors.
         /// </summary>
         /// <param name="settings">The settings.</param>
         /// <param name="codes">Only treat specified warning codes as errors.</param>
@@ -317,6 +423,58 @@ namespace Cake.Common.Tools.MSBuild
                 settings.WarningsAsMessageCodes.Add(code);
             }
 
+            return settings;
+        }
+
+        /// <summary>
+        /// Invoke the Restore target before any other target.
+        /// </summary>
+        /// <param name="settings">The setting</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings WithRestore(this MSBuildSettings settings)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            settings.Restore = true;
+
+            return settings;
+        }
+
+        /// <summary>
+        /// Sets whether or not to lock the package dependency graph while restoring, using the packages.lock.json file.
+        /// This setting is available with atleast Visual Studio 2017 version 15.9 and above or NET SDK version 2.1.500 and above.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="restoreLockedMode"><c>true</c> if locked mode restore should be enabled; otherwise <c>false</c>.</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings SetRestoreLockedMode(this MSBuildSettings settings, bool restoreLockedMode)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            settings.RestoreLockedMode = restoreLockedMode;
+            return settings;
+        }
+
+        /// <summary>
+        /// Adds a console logger parameter.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="parameter">The console logger parameter.</param>
+        /// <returns>The same <see cref="MSBuildSettings"/> instance so that multiple calls can be chained.</returns>
+        public static MSBuildSettings WithConsoleLoggerParameter(this MSBuildSettings settings, string parameter)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            settings.ConsoleLoggerParameters.Add(parameter);
             return settings;
         }
     }

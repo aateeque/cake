@@ -68,6 +68,15 @@ namespace Cake.Common.Tools.NuGet.Pack
                 }
             }
 
+            if (settings.Repository != null)
+            {
+                var repositoryNode = FindOrCreateElement(document, namespaceManager, "repository");
+                repositoryNode.AddAttributeIfSpecified(settings.Repository.Type, "type");
+                repositoryNode.AddAttributeIfSpecified(settings.Repository.Url, "url");
+                repositoryNode.AddAttributeIfSpecified(settings.Repository.Commit, "commit");
+                repositoryNode.AddAttributeIfSpecified(settings.Repository.Branch, "branch");
+            }
+
             if (settings.Files != null && settings.Files.Count > 0)
             {
                 var filesPath = string.Format(CultureInfo.InvariantCulture, "//*[local-name()='package']//*[local-name()='files']");
@@ -191,28 +200,28 @@ namespace Cake.Common.Tools.NuGet.Pack
             return value?.ToString().TrimEnd('/');
         }
 
-        private static string ToString(bool value)
+        private static string ToString(bool? value)
         {
-            return value.ToString().ToLowerInvariant();
+            return value?.ToString().ToLowerInvariant();
         }
 
-        private static string ToCommaSeparatedString(IEnumerable<string> values)
+        private static string ToCommaSeparatedString(ICollection<string> values)
         {
-            return values != null
+            return values != null && values.Count != 0
                 ? string.Join(",", values)
                 : null;
         }
 
-        private static string ToMultiLineString(IEnumerable<string> values)
+        private static string ToMultiLineString(ICollection<string> values)
         {
-            return values != null
+            return values != null && values.Count != 0
                 ? string.Join("\r\n", values).NormalizeLineEndings()
                 : null;
         }
 
-        private static string ToSpaceSeparatedString(IEnumerable<string> values)
+        private static string ToSpaceSeparatedString(ICollection<string> values)
         {
-            return values != null
+            return values != null && values.Count != 0
                 ? string.Join(" ", values.Select(x => x.Replace(" ", "-")))
                 : null;
         }

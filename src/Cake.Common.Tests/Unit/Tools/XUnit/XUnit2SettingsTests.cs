@@ -63,6 +63,16 @@ namespace Cake.Common.Tests.Unit.Tools.XUnit
             }
 
             [Fact]
+            public void Should_Disable_JUnit_Report_By_Default()
+            {
+                // Given, When
+                var settings = new XUnit2Settings();
+
+                // Then
+                Assert.False(settings.JUnitReport);
+            }
+
+            [Fact]
             public void Should_Enable_Shadow_Copying_By_Default()
             {
                 // Given, When
@@ -83,13 +93,13 @@ namespace Cake.Common.Tests.Unit.Tools.XUnit
             }
 
             [Fact]
-            public void Should_Set_Parallelism_Option_To_None_By_Default()
+            public void Should_Set_Parallelism_Option_To_Null_By_Default()
             {
                 // Given, When
                 var settings = new XUnit2Settings();
 
                 // Then
-                Assert.Equal(settings.Parallelism, ParallelismOption.None);
+                Assert.Null(settings.Parallelism);
             }
 
             [Fact]
