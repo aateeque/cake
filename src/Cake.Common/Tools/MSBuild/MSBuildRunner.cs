@@ -70,6 +70,12 @@ namespace Cake.Common.Tools.MSBuild
                 builder.Append("/noconlog");
             }
 
+            // Set the no logo flag.
+            if (settings.NoLogo.GetValueOrDefault())
+            {
+                builder.Append("/nologo");
+            }
+
             // Set the verbosity.
             builder.Append(string.Format(CultureInfo.InvariantCulture, "/v:{0}", settings.Verbosity.GetMSBuildVerbosityName()));
 
@@ -110,8 +116,12 @@ namespace Cake.Common.Tools.MSBuild
             }
             else
             {
-                // Use default target.
-                builder.Append("/target:Build");
+                // Should use implicit target?
+                if (!settings.NoImplicitTarget.GetValueOrDefault())
+                {
+                    // Use default target.
+                    builder.Append("/target:Build");
+                }
             }
 
             if (settings.Loggers.Count > 0)
@@ -163,7 +173,7 @@ namespace Cake.Common.Tools.MSBuild
                 }
             }
 
-            // Treat errors as warníngs?
+            // Treat errors as warnings?
             if (settings.WarningsAsErrorCodes.Any())
             {
                 var codes = string.Join(";", settings.WarningsAsErrorCodes);
@@ -185,6 +195,12 @@ namespace Cake.Common.Tools.MSBuild
             if (settings.Restore)
             {
                 builder.Append("/restore");
+            }
+
+            // Set restore locked mode?
+            if (settings.RestoreLockedMode.HasValue)
+            {
+                builder.Append(string.Concat("/p:RestoreLockedMode=", settings.RestoreLockedMode.Value ? "true" : "false"));
             }
 
             // Got any console logger parameters?
@@ -250,6 +266,8 @@ namespace Cake.Common.Tools.MSBuild
                     return "x64";
                 case PlatformTarget.ARM:
                     return "arm";
+                case PlatformTarget.ARM64:
+                    return "arm64";
                 case PlatformTarget.Win32:
                     return "Win32";
                 default:

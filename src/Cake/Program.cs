@@ -16,7 +16,6 @@ using Cake.Core.Modules;
 using Cake.Core.Text;
 using Cake.Modules;
 using Cake.NuGet;
-using Cake.Polyfill;
 
 namespace Cake
 {
@@ -37,7 +36,7 @@ namespace Cake
             {
                 // Parse arguments.
                 var args = QuoteAwareStringSplitter
-                    .Split(EnvironmentHelper.GetCommandLine())
+                    .Split(Environment.CommandLine)
                     .Skip(1) // Skip executable.
                     .ToArray();
 
@@ -101,7 +100,7 @@ namespace Cake
                 var aex = ex as AggregateException;
                 if (aex != null)
                 {
-                    foreach (var exception in aex.InnerExceptions)
+                    foreach (var exception in aex.Flatten().InnerExceptions)
                     {
                         log.Error("\t{0}", exception.Message);
                     }

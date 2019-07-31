@@ -22,7 +22,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Throw_If_Count_Is_Less_Than_1()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.Count = 0;
 
                 // When
@@ -36,7 +36,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Map_Count_To_Query_Filter()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.Count = 10;
 
                 // When
@@ -51,7 +51,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Add_ProjectName_To_Query_Filter()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.ProjectName = "Project A";
 
                 // When
@@ -66,7 +66,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Add_EnvironmentName_To_Query_Filter()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.EnvironmentName = "Env A";
 
                 // When
@@ -81,7 +81,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Add_TenantName_To_Query_Filter()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.TenantName = "Tenant A";
 
                 // When
@@ -93,10 +93,26 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             }
 
             [Fact]
+            public void Should_Add_Space_To_Query_Filter_If_Not_Null()
+            {
+                // Given
+                var fixture = new OctopusDeploymentQuerierFixture();
+                fixture.Settings.TenantName = "Tenant A";
+                fixture.Settings.Space = "spacename";
+
+                // When
+                var result = fixture.Run();
+
+                // Then
+                Assert.Equal("list-deployments --tenant \"Tenant A\" --number 1 " +
+                             "--server http://octopus --apiKey API-12345 --space \"spacename\"", result.Args);
+            }
+
+            [Fact]
             public void Should_Map_All_Query_Filter_Options()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.ProjectName = "Project A";
                 fixture.Settings.EnvironmentName = "Env A";
                 fixture.Settings.TenantName = "Tenant A";
@@ -116,7 +132,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Throw_If_Octo_Executable_Was_Not_Found()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.GivenDefaultToolDoNotExist();
 
                 // When
@@ -127,12 +143,12 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             }
 
             [Theory]
-            [InlineData("/bin/tools/octopus/octo.exe", "/bin/tools/octopus/octo.exe")]
-            [InlineData("./tools/octopus/octo.exe", "/Working/tools/octopus/octo.exe")]
+            [InlineData("/bin/tools/octopus/Octo.exe", "/bin/tools/octopus/Octo.exe")]
+            [InlineData("./tools/octopus/Octo.exe", "/Working/tools/octopus/Octo.exe")]
             public void Should_Use_Octo_Executable_From_Tool_Path_If_Provided(string toolPath, string expected)
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.ToolPath = toolPath;
                 fixture.GivenSettingsToolPathExist();
 
@@ -144,11 +160,11 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             }
 
             [WindowsTheory]
-            [InlineData("C:/octopusDeploy/octo.exe", "C:/octopusDeploy/octo.exe")]
+            [InlineData("C:/octopusDeploy/Octo.exe", "C:/octopusDeploy/Octo.exe")]
             public void Should_Use_Octo_Executable_From_Tool_Path_If_Provided_On_Windows(string toolPath, string expected)
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.Settings.ToolPath = toolPath;
                 fixture.GivenSettingsToolPathExist();
 
@@ -163,7 +179,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Find_Octo_Executable_If_Tool_Path_Not_Provided()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
 
                 // When
                 var result = fixture.Run();
@@ -176,7 +192,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Throw_If_Process_Was_Not_Started()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.GivenProcessCannotStart();
 
                 // When
@@ -190,7 +206,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             public void Should_Throw_If_Process_Has_A_Non_Zero_Exit_Code()
             {
                 // Given
-                var fixture = new OctopusDeploymentQueryierFixture();
+                var fixture = new OctopusDeploymentQuerierFixture();
                 fixture.GivenProcessExitsWithCode(1);
 
                 // When

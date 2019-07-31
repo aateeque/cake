@@ -14,26 +14,26 @@ namespace Cake.Core.Tests.Unit
             public void Should_Throw_If_Criteria_Is_Null()
             {
                 // Given
-                var task = new ActionTask("task");
+                var task = new CakeTask("task");
 
                 // When
                 var result = Record.Exception(() => task.AddCriteria(null));
 
                 // Then
-                AssertEx.IsArgumentNullException(result, "criteria");
+                AssertEx.IsArgumentNullException(result, "predicate");
             }
 
             [Fact]
             public void Should_Add_Criteria()
             {
                 // Given
-                var task = new ActionTask("task");
+                var task = new CakeTask("task");
 
                 // When
-                task.AddCriteria(() => true);
+                task.AddCriteria(context => true);
 
                 // Then
-                Assert.Equal(1, task.Criterias.Count);
+                Assert.Single(task.Criterias);
             }
         }
     }

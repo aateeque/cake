@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using Cake.Core.Configuration;
 using Cake.Core.Diagnostics;
 using Cake.Core.IO;
 using Cake.Core.Tooling;
@@ -25,6 +26,8 @@ namespace Cake.Core
         /// <param name="processRunner">The process runner.</param>
         /// <param name="registry">The registry.</param>
         /// <param name="tools">The tool locator.</param>
+        /// <param name="data">The data service.</param>
+        /// <param name="configuration">The cake configuration.</param>
         public CakeContext(
             IFileSystem fileSystem,
             ICakeEnvironment environment,
@@ -33,45 +36,20 @@ namespace Cake.Core
             ICakeArguments arguments,
             IProcessRunner processRunner,
             IRegistry registry,
-            IToolLocator tools)
+            IToolLocator tools,
+            ICakeDataService data,
+            ICakeConfiguration configuration)
         {
-            if (fileSystem == null)
-            {
-                throw new ArgumentNullException(nameof(fileSystem));
-            }
-            if (environment == null)
-            {
-                throw new ArgumentNullException(nameof(environment));
-            }
-            if (globber == null)
-            {
-                throw new ArgumentNullException(nameof(globber));
-            }
-            if (log == null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
-            if (arguments == null)
-            {
-                throw new ArgumentNullException(nameof(arguments));
-            }
-            if (processRunner == null)
-            {
-                throw new ArgumentNullException(nameof(processRunner));
-            }
-            if (tools == null)
-            {
-                throw new ArgumentNullException(nameof(tools));
-            }
-
-            FileSystem = fileSystem;
-            Environment = environment;
-            Globber = globber;
-            Log = log;
-            Arguments = arguments;
-            ProcessRunner = processRunner;
-            Registry = registry;
-            Tools = tools;
+            FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            Environment = environment ?? throw new ArgumentNullException(nameof(environment));
+            Globber = globber ?? throw new ArgumentNullException(nameof(globber));
+            Log = log ?? throw new ArgumentNullException(nameof(log));
+            Arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
+            ProcessRunner = processRunner ?? throw new ArgumentNullException(nameof(processRunner));
+            Registry = registry ?? throw new ArgumentNullException(nameof(registry));
+            Tools = tools ?? throw new ArgumentNullException(nameof(tools));
+            Data = data ?? throw new ArgumentNullException(nameof(data));
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -137,5 +115,15 @@ namespace Cake.Core
         /// The tool locator.
         /// </value>
         public IToolLocator Tools { get; }
+
+        /// <summary>
+        /// Gets the data context resolver.
+        /// </summary>
+        public ICakeDataResolver Data { get; }
+
+        /// <summary>
+        /// Gets the cake configuration.
+        /// </summary>
+        public ICakeConfiguration Configuration { get; }
     }
 }

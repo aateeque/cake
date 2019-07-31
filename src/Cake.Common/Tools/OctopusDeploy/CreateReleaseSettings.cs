@@ -12,7 +12,7 @@ namespace Cake.Common.Tools.OctopusDeploy
     /// Contains settings used by <see cref="OctopusDeployReleaseCreator.CreateRelease"/>.
     /// See Octopus Deploy documentation <see href="http://docs.octopusdeploy.com/display/OD/Creating+releases">here</see>
     /// </summary>
-    public sealed class CreateReleaseSettings : OctopusDeploySettings
+    public sealed class CreateReleaseSettings : OctopusDeployCommonToolSettings
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateReleaseSettings"/> class.
@@ -35,7 +35,7 @@ namespace Cake.Common.Tools.OctopusDeploy
         /// <summary>
         /// Gets or sets the version number to use for a package in the release.
         /// </summary>
-        public Dictionary<string, string> Packages { get; set; }
+        public Dictionary<string, string> Packages { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets or sets the folder containing NuGet packages.

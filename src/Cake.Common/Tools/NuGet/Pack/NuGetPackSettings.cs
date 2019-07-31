@@ -60,10 +60,16 @@ namespace Cake.Common.Tools.NuGet.Pack
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the Nuspec version.
+        /// Gets or sets the nuspec version.
         /// </summary>
-        /// <value>The Nuspec version.</value>
+        /// <value>The nuspec version.</value>
         public string Version { get; set; }
+
+        /// <summary>
+        /// Gets or sets the nuspec version suffix.
+        /// </summary>
+        /// <value>The nuspec version suffix.</value>
+        public string Suffix { get; set; }
 
         /// <summary>
         /// Gets or sets the package title.
@@ -75,13 +81,13 @@ namespace Cake.Common.Tools.NuGet.Pack
         /// Gets or sets the package authors.
         /// </summary>
         /// <value>The package authors.</value>
-        public ICollection<string> Authors { get; set; }
+        public ICollection<string> Authors { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets the package owners.
         /// </summary>
         /// <value>The package owners.</value>
-        public ICollection<string> Owners { get; set; }
+        public ICollection<string> Owners { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets the package description.
@@ -123,13 +129,45 @@ namespace Cake.Common.Tools.NuGet.Pack
         /// Gets or sets the package release notes.
         /// </summary>
         /// <value>The package release notes.</value>
-        public ICollection<string> ReleaseNotes { get; set; }
+        public ICollection<string> ReleaseNotes { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets the package tags.
         /// </summary>
         /// <value>The package tags.</value>
-        public ICollection<string> Tags { get; set; }
+        public ICollection<string> Tags { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this package should be marked as a serviceable.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if serviceable; otherwise, <c>false</c>.
+        /// </value>
+        public bool? Serviceable { get; set; }
+
+        /// <summary>
+        /// Gets or sets the package repository data.
+        /// </summary>
+        /// <value>The package repository data.</value>
+        public NuGetRepository Repository { get; set; }
+
+        /// <summary>
+        /// Gets or sets the package license.
+        /// </summary>
+        /// <value>The package license.</value>
+        public NuSpecLicense License { get; set; }
+
+        /// <summary>
+        /// Gets or sets the package types.
+        /// </summary>
+        /// <value>The package types.</value>
+        public ICollection<NuSpecPackageType> PackageTypes { get; set; } = new List<NuSpecPackageType>();
+
+        /// <summary>
+        /// Gets or sets the package framework assemblies.
+        /// </summary>
+        /// <value>The package framework assemblies.</value>
+        public ICollection<NuSpecFrameworkAssembly> FrameworkAssemblies { get; set; } = new List<NuSpecFrameworkAssembly>();
 
         /// <summary>
         /// Gets or sets a value indicating whether this package should be marked as a development dependency.
@@ -137,7 +175,7 @@ namespace Cake.Common.Tools.NuGet.Pack
         /// <value>
         ///   <c>true</c> if a development dependency; otherwise, <c>false</c>.
         /// </value>
-        public bool DevelopmentDependency { get; set; }
+        public bool? DevelopmentDependency { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether users has to accept the package license.
@@ -145,19 +183,37 @@ namespace Cake.Common.Tools.NuGet.Pack
         /// <value>
         /// <c>true</c> if users has to accept the package license; otherwise, <c>false</c>.
         /// </value>
-        public bool RequireLicenseAcceptance { get; set; }
+        public bool? RequireLicenseAcceptance { get; set; }
+
+        /// <summary>
+        /// Gets or sets the package references.
+        /// </summary>
+        /// <value>The package references.</value>
+        public ICollection<NuSpecReference> References { get; set; } = new List<NuSpecReference>();
+
+        /// <summary>
+        /// Gets or sets the package content files.
+        /// </summary>
+        /// <value>The package content files.</value>
+        public ICollection<NuSpecContentFile> ContentFiles { get; set; } = new List<NuSpecContentFile>();
+
+        /// <summary>
+        /// Gets or sets the package minimum client version.
+        /// </summary>
+        /// <value>The package minimum client version.</value>
+        public string MinClientVersion { get; set; }
 
         /// <summary>
         /// Gets or sets the package files.
         /// </summary>
         /// <value>The package files.</value>
-        public ICollection<NuSpecContent> Files { get; set; }
+        public ICollection<NuSpecContent> Files { get; set; } = new List<NuSpecContent>();
 
         /// <summary>
         /// Gets or sets the package dependencies.
         /// </summary>
         /// <value>The package files.</value>
-        public ICollection<NuSpecDependency> Dependencies { get; set; }
+        public ICollection<NuSpecDependency> Dependencies { get; set; } = new List<NuSpecDependency>();
 
         /// <summary>
         /// Gets or sets the verbosity.
@@ -171,7 +227,7 @@ namespace Cake.Common.Tools.NuGet.Pack
         /// <value>
         /// The properties.
         /// </value>
-        public IDictionary<string, string> Properties { get; set; }
+        public IDictionary<string, string> Properties { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets or sets the version of MSBuild to be used with this command.
@@ -201,7 +257,7 @@ namespace Cake.Common.Tools.NuGet.Pack
         /// Defaults to <c>false</c>.
         /// </summary>
         /// <value>
-        /// <c>true</c> if the output should be placed in the tool folder inside the nuget package; otherwise <c>false</c>.
+        /// <c>true</c> if the output should be placed in the tool folder inside the NuGet package; otherwise <c>false</c>.
         /// </value>
         public bool OutputToToolFolder { get; set; }
     }

@@ -238,6 +238,22 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             }
 
             [Fact]
+            public void Should_Add_Space_To_Arguments_If_Not_Null()
+            {
+                // Given
+                var fixture = new OctopusDeployPusherFixture();
+                fixture.Settings.Space = "spacename";
+
+                // When
+                var result = fixture.Run();
+
+                // Then
+                Assert.Equal("push --package \"/Working/MyPackage.1.0.0.zip\" " +
+                             "--package \"/Working/MyOtherPackage.1.0.1.nupkg\" " +
+                             "--server http://octopus --apiKey API-12345 --space \"spacename\"", result.Args);
+            }
+
+            [Fact]
             public void Should_Throw_If_Octo_Executable_Was_Not_Found()
             {
                 // Given
@@ -252,8 +268,8 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             }
 
             [Theory]
-            [InlineData("/bin/tools/octopus/octo.exe", "/bin/tools/octopus/octo.exe")]
-            [InlineData("./tools/octopus/octo.exe", "/Working/tools/octopus/octo.exe")]
+            [InlineData("/bin/tools/octopus/Octo.exe", "/bin/tools/octopus/Octo.exe")]
+            [InlineData("./tools/octopus/Octo.exe", "/Working/tools/octopus/Octo.exe")]
             public void Should_Use_Octo_Executable_From_Tool_Path_If_Provided(string toolPath, string expected)
             {
                 // Given
@@ -269,7 +285,7 @@ namespace Cake.Common.Tests.Unit.Tools.OctopusDeploy
             }
 
             [WindowsTheory]
-            [InlineData("C:/octopusDeploy/octo.exe", "C:/octopusDeploy/octo.exe")]
+            [InlineData("C:/octopusDeploy/Octo.exe", "C:/octopusDeploy/Octo.exe")]
             public void Should_Use_Octo_Executable_From_Tool_Path_If_Provided_On_Windows(string toolPath, string expected)
             {
                 // Given

@@ -95,6 +95,12 @@ namespace Cake.Common.Tools.DotNetCore.Publish
                 builder.Append(settings.VersionSuffix);
             }
 
+            // No Build
+            if (settings.NoBuild)
+            {
+                builder.Append("--no-build");
+            }
+
             // No Dependencies
             if (settings.NoDependencies)
             {
@@ -114,9 +120,17 @@ namespace Cake.Common.Tools.DotNetCore.Publish
             }
 
             // Self contained
-            if (settings.SelfContained)
+            if (settings.SelfContained.HasValue)
             {
                 builder.Append("--self-contained");
+                if (settings.SelfContained.Value)
+                {
+                    builder.Append("true");
+                }
+                else
+                {
+                    builder.Append("false");
+                }
             }
 
             // Sources

@@ -8,9 +8,16 @@ using Cake.Core.Tooling;
 namespace Cake.Common.Tools.OctopusDeploy
 {
     /// <summary>
-    /// Contains the common settings used by all commands in <see cref="OctopusDeployReleaseCreator"/>.
+    /// Base class for tool settings used by all commands in <see cref="OctopusDeployTool{TSettings}"/>.
     /// </summary>
-    public abstract class OctopusDeploySettings : ToolSettings
+    public abstract class OctopusDeployToolSettings : ToolSettings
+    {
+    }
+
+    /// <summary>
+    /// Contains the common settings used by all commands in <see cref="OctopusDeployTool{TSettings}"/>.
+    /// </summary>
+    public abstract class OctopusDeployCommonToolSettings : OctopusDeployToolSettings
     {
         /// <summary>
         /// Gets or sets the username to use when authenticating with the server
@@ -51,5 +58,10 @@ namespace Cake.Common.Tools.OctopusDeploy
         /// Gets or sets a value indicating whether the enable service messages flag is set
         /// </summary>
         public bool EnableServiceMessages { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of a space within which this command will be executed. The default space will be used if it is omitted.
+        /// </summary>
+        public string Space { get; set; }
     }
 }

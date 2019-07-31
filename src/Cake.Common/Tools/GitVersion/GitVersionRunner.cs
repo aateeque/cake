@@ -159,6 +159,52 @@ namespace Cake.Common.Tools.GitVersion
                 builder.Append("-nofetch");
             }
 
+            if (settings.Verbosity.HasValue)
+            {
+                switch (settings.Verbosity.Value)
+                {
+                    case GitVersionVerbosity.None:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.None));
+                        break;
+                    case GitVersionVerbosity.Debug:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.Debug));
+                        break;
+                    case GitVersionVerbosity.Info:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.Info));
+                        break;
+                    case GitVersionVerbosity.Warn:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.Warn));
+                        break;
+                    case GitVersionVerbosity.Error:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.Error));
+                        break;
+                }
+            }
+            else
+            {
+                switch (_log.Verbosity)
+                {
+                    case Verbosity.Quiet:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.None));
+                        break;
+                    case Verbosity.Diagnostic:
+                    case Verbosity.Verbose:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.Debug));
+                        break;
+                    case Verbosity.Minimal:
+                        builder.Append("-verbosity");
+                        builder.Append(nameof(GitVersionVerbosity.Error));
+                        break;
+                }
+            }
+
             return builder;
         }
 
@@ -177,7 +223,7 @@ namespace Cake.Common.Tools.GitVersion
         /// <returns>The tool executable name.</returns>
         protected override IEnumerable<string> GetToolExecutableNames()
         {
-            return new[] { "GitVersion.exe" };
+            return new[] { "GitVersion.exe", "dotnet-gitversion", "dotnet-gitversion.exe" };
         }
     }
 }

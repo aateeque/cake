@@ -96,6 +96,20 @@ namespace Cake.Core.Tests.Unit
             }
 
             [Fact]
+            public void Should_Throw_If_Registry_Is_Null()
+            {
+                // Given
+                var fixture = new CakeContextFixture();
+                fixture.Registry = null;
+
+                // When
+                var result = Record.Exception(() => fixture.CreateContext());
+
+                // Then
+                AssertEx.IsArgumentNullException(result, "registry");
+            }
+
+            [Fact]
             public void Should_Throw_If_Tools_Are_Null()
             {
                 // Given
@@ -107,6 +121,20 @@ namespace Cake.Core.Tests.Unit
 
                 // Then
                 AssertEx.IsArgumentNullException(result, "tools");
+            }
+
+            [Fact]
+            public void Should_Throw_If_Configuration_Is_Null()
+            {
+                // Given
+                var fixture = new CakeContextFixture();
+                fixture.Configuration = null;
+
+                // When
+                var result = Record.Exception(() => fixture.CreateContext());
+
+                // Then
+                AssertEx.IsArgumentNullException(result, "configuration");
             }
         }
 
@@ -194,6 +222,20 @@ namespace Cake.Core.Tests.Unit
 
                 // Then
                 Assert.Same(fixture.ProcessRunner, processRunner);
+            }
+
+            [Fact]
+            public void Should_Return_Provided_Configuration()
+            {
+                // Given
+                var fixture = new CakeContextFixture();
+                var context = fixture.CreateContext();
+
+                // When
+                var configuration = context.Configuration;
+
+                // Then
+                Assert.Same(fixture.Configuration, configuration);
             }
         }
     }

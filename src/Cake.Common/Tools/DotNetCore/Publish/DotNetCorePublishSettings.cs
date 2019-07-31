@@ -39,6 +39,15 @@ namespace Cake.Common.Tools.DotNetCore.Publish
         public string VersionSuffix { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to not to build the project before publishing.
+        /// This makes build faster, but requires build to be done before publish is executed.
+        /// </summary>
+        /// <remarks>
+        /// Requires .NET Core 2.1 or newer.
+        /// </remarks>
+        public bool NoBuild { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether to ignore project to project references and only build the root project.
         /// </summary>
         /// <remarks>
@@ -69,7 +78,7 @@ namespace Cake.Common.Tools.DotNetCore.Publish
         /// <remarks>
         /// Requires .NET Core 2.x or newer.
         /// </remarks>
-        public bool SelfContained { get; set; }
+        public bool? SelfContained { get; set; }
 
         /// <summary>
         /// Gets or sets the specified NuGet package sources to use during the restore.
@@ -77,7 +86,7 @@ namespace Cake.Common.Tools.DotNetCore.Publish
         /// <remarks>
         /// Requires .NET Core 2.x or newer.
         /// </remarks>
-        public ICollection<string> Sources { get; set; }
+        public ICollection<string> Sources { get; set; } = new List<string>();
 
         /// <summary>
         /// Gets or sets additional arguments to be passed to MSBuild.

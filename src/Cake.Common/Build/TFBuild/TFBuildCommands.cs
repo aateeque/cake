@@ -150,7 +150,7 @@ namespace Cake.Common.Build.TFBuild
         /// <param name="type">Type of the new timeline record.</param>
         /// <param name="order">Order of the timeline record.</param>
         /// <param name="data">Additional data for the new timeline record.</param>
-        /// <returns>The timeilne record ID.</returns>
+        /// <returns>The timeline record ID.</returns>
         public Guid CreateNewRecord(string name, string type, int order, TFBuildRecordData data)
         {
             var guid = Guid.NewGuid();
@@ -280,6 +280,37 @@ namespace Cake.Common.Build.TFBuild
             }, file.MakeAbsolute(_environment).FullPath);
         }
 
+        /// <inheritdoc />
+        public void UploadArtifactDirectory(DirectoryPath directory)
+        {
+            if (directory == null)
+            {
+                throw new ArgumentNullException(nameof(directory));
+            }
+
+            UploadArtifactDirectory(directory, directory.GetDirectoryName());
+        }
+
+        /// <inheritdoc />
+        public void UploadArtifactDirectory(DirectoryPath directory, string artifactName)
+        {
+            if (directory == null)
+            {
+                throw new ArgumentNullException(nameof(directory));
+            }
+
+            if (artifactName == null)
+            {
+                throw new ArgumentNullException(nameof(artifactName));
+            }
+
+            WriteLoggingCommand("artifact.upload", new Dictionary<string, string>
+            {
+                ["containerfolder"] = artifactName,
+                ["artifactname"] = artifactName
+            }, directory.MakeAbsolute(_environment).FullPath);
+        }
+
         /// <summary>
         /// Upload additional log to build container's <c>logs/tool</c> folder.
         /// </summary>
@@ -311,6 +342,60 @@ namespace Cake.Common.Build.TFBuild
         public void AddBuildTag(string tag)
         {
             WriteLoggingCommand("build.addbuildtag", tag);
+        }
+
+        /// <summary>
+        /// Publishes and uploads tests results
+        /// </summary>
+        /// <param name="data">The publish test results data</param>
+        public void PublishTestResults(TFBuildPublishTestResultsData data)
+        {
+            var properties = data.GetProperties(_environment);
+            WriteLoggingCommand("results.publish", properties, string.Empty);
+        }
+
+        /// <summary>
+        /// Publishes and uploads code coverage results
+        /// </summary>
+        /// <param name="data">The code coverage data</param>
+        public void PublishCodeCoverage(TFBuildPublishCodeCoverageData data)
+        {
+            var properties = data.GetProperties(_environment);
+            WriteLoggingCommand("codecoverage.publish", properties, string.Empty);
+        }
+
+        /// <summary>
+        /// Publishes and uploads code coverage results
+        /// </summary>
+        /// <param name="summaryFilePath">The code coverage summary file path.</param>
+        /// <param name="data">The code coverage data</param>
+        public void PublishCodeCoverage(FilePath summaryFilePath, TFBuildPublishCodeCoverageData data)
+        {
+            if (summaryFilePath == null)
+            {
+                throw new ArgumentNullException(nameof(summaryFilePath));
+            }
+
+            var properties = data.GetProperties(_environment, summaryFilePath);
+            WriteLoggingCommand("codecoverage.publish", properties, string.Empty);
+        }
+
+        /// <summary>
+        /// Publishes and uploads code coverage results
+        /// </summary>
+        /// <param name="summaryFilePath">The code coverage summary file path.</param>
+        /// <param name="action">The configuration action for the code coverage data.</param>
+        public void PublishCodeCoverage(FilePath summaryFilePath, Action<TFBuildPublishCodeCoverageData> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var data = new TFBuildPublishCodeCoverageData();
+            action(data);
+
+            PublishCodeCoverage(summaryFilePath, data);
         }
 
         private void WriteLoggingCommand(string actionName, string value)

@@ -291,6 +291,99 @@ namespace Cake.Common.Tests.Unit.Tools.MSBuild
             }
         }
 
+        public sealed class TheNoLogoMethod
+        {
+            [Theory]
+            [InlineData(true)]
+            [InlineData(false)]
+            public void Should_Set_No_Logo(bool noLogo)
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // When
+                settings.SetNoLogo(noLogo);
+
+                // Then
+                Assert.Equal(noLogo, settings.NoLogo);
+            }
+
+            [Fact]
+            public void Should_Return_The_Same_Configuration()
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // When
+                var result = settings.SetNoLogo(true);
+
+                // Then
+                Assert.Equal(settings, result);
+            }
+        }
+
+        public sealed class TheNoImplicitTargetMethod
+        {
+            [Theory]
+            [InlineData(true)]
+            [InlineData(false)]
+            public void Should_Set_No_Implicit_Target(bool noImplicitTarget)
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // When
+                settings.SetNoImplicitTarget(noImplicitTarget);
+
+                // Then
+                Assert.Equal(noImplicitTarget, settings.NoImplicitTarget);
+            }
+
+            [Fact]
+            public void Should_Return_The_Same_Configuration()
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // When
+                var result = settings.SetNoImplicitTarget(true);
+
+                // Then
+                Assert.Equal(settings, result);
+            }
+        }
+
+        public sealed class TheSetRestoreLockedModeMethod
+        {
+            [Theory]
+            [InlineData(true)]
+            [InlineData(false)]
+            public void Should_Set_RestoreLockedMode(bool restoreLockedMode)
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // When
+                settings.SetRestoreLockedMode(restoreLockedMode);
+
+                // Then
+                Assert.Equal(restoreLockedMode, settings.RestoreLockedMode);
+            }
+
+            [Fact]
+            public void Should_Return_The_Same_Configuration()
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // When
+                var result = settings.SetRestoreLockedMode(true);
+
+                // Then
+                Assert.Equal(settings, result);
+            }
+        }
+
         public sealed class TheSetVerbosityMethod
         {
             [Theory]

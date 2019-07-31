@@ -82,7 +82,7 @@ namespace Cake.Common.Tools.NuGet.Pack
         }
 
         /// <summary>
-        /// Creates a NuGet package from the specified Nuspec or project file.
+        /// Creates a NuGet package from the specified nuspec or project file.
         /// </summary>
         /// <param name="filePath">The nuspec or project file path.</param>
         /// <param name="settings">The settings.</param>
@@ -148,6 +148,13 @@ namespace Cake.Common.Tools.NuGet.Pack
                 builder.AppendQuoted(settings.Version);
             }
 
+            // Version suffix
+            if (!string.IsNullOrWhiteSpace(settings.Suffix))
+            {
+                builder.Append("-Suffix");
+                builder.AppendQuoted(settings.Suffix);
+            }
+
             // Base path
             if (settings.BasePath != null)
             {
@@ -194,7 +201,7 @@ namespace Cake.Common.Tools.NuGet.Pack
             if (settings.MSBuildVersion.HasValue)
             {
                 builder.Append("-MSBuildVersion");
-                builder.Append(settings.MSBuildVersion.Value.ToString("D"));
+                builder.Append(settings.MSBuildVersion.Value.GetNuGetMSBuildVersionString());
             }
 
             // Use the tool folder

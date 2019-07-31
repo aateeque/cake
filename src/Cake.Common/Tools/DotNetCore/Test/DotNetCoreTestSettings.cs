@@ -72,5 +72,15 @@ namespace Cake.Common.Tools.DotNetCore.Test
         /// Gets or sets the results directory. This setting is only available from 2.0.0 upward.
         /// </summary>
         public DirectoryPath ResultsDirectory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file path to write VSTest reports to.
+        /// </summary>
+        public FilePath VSTestReportPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the target runtime to test for. This setting is only available from .NET Core 3.x upward.
+        /// </summary>
+        public string Runtime { get; set; }
     }
 }

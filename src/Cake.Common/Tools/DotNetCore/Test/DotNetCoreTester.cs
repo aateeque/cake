@@ -133,6 +133,17 @@ namespace Cake.Common.Tools.DotNetCore.Test
                 builder.AppendQuoted(settings.ResultsDirectory.MakeAbsolute(_environment).FullPath);
             }
 
+            if (settings.VSTestReportPath != null)
+            {
+                builder.AppendSwitchQuoted($"--logger trx;LogFileName", "=", settings.VSTestReportPath.MakeAbsolute(_environment).FullPath);
+            }
+
+            if (!string.IsNullOrEmpty(settings.Runtime))
+            {
+                builder.Append("--runtime");
+                builder.Append(settings.Runtime);
+            }
+
             return builder;
         }
     }

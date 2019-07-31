@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 
 namespace Cake.Core.IO
@@ -24,6 +25,12 @@ namespace Cake.Core.IO
         public DirectoryPath WorkingDirectory { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether or not to opt out of using
+        /// an explicit working directory for the process.
+        /// </summary>
+        public bool NoWorkingDirectory { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether the error output of an application is written to the standard error stream.
         /// </summary>
         /// <value>true if error output should be redirected; false if error output should be written to the standard error stream. The default is false.</value>
@@ -34,6 +41,16 @@ namespace Cake.Core.IO
         /// </summary>
         /// <value>true if output should be redirected; false if output should be written to the standard output stream. The default is false.</value>
         public bool RedirectStandardOutput { get; set; }
+
+        /// <summary>
+        /// Gets or sets a function that intercepts the error output before being redirected. Use in conjunction with <see cref="RedirectStandardError"/>
+        /// </summary>
+        public Func<string, string> RedirectedStandardErrorHandler { get; set; }
+
+        /// <summary>
+        /// Gets or sets a function that intercepts the standard output before being redirected. Use in conjunction with <see cref="RedirectStandardOutput"/>
+        /// </summary>
+        public Func<string, string> RedirectedStandardOutputHandler { get; set; }
 
         /// <summary>
         /// Gets or sets optional timeout, in milliseconds, to wait for the associated process to exit. The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system.

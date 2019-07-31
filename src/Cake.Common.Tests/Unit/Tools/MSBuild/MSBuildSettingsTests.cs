@@ -140,6 +140,19 @@ namespace Cake.Common.Tests.Unit.Tools.MSBuild
             }
         }
 
+        public sealed class TheNoLogoProperty
+        {
+            [Fact]
+            public void Should_Be_Null_By_Default()
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // Then
+                Assert.Null(settings.NoLogo);
+            }
+        }
+
         public sealed class TheLoggersProperty
         {
             [Fact]
@@ -215,6 +228,19 @@ namespace Cake.Common.Tests.Unit.Tools.MSBuild
 
                 // Then
                 Assert.Empty(settings.ConsoleLoggerParameters);
+            }
+        }
+
+        public sealed class TheRestoreLockedModeProperty
+        {
+            [Fact]
+            public void Should_Be_Null_By_Default()
+            {
+                // Given
+                var settings = new MSBuildSettings();
+
+                // Then
+                Assert.Null(settings.RestoreLockedMode);
             }
         }
     }
